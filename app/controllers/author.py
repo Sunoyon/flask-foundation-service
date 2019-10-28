@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import flask_rebar
 from flask_rebar import errors
 
@@ -42,7 +44,8 @@ def get_author_by_id(author_id: int):
 def get_author_by_name(author_name: str):
     authors = author_service.get_by_name(author_name)
     if not authors:
-        raise errors.NotFound()
+        raise errors.NotFound(msg="Author is not found for [name={}]".format(author_name)
+                              , additional_data={'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
     return authors
 
 
@@ -56,7 +59,8 @@ def update_author(author_id: int):
     body = flask_rebar.get_validated_body()
     author = author_service.update(author_id, body)
     if author is None:
-        raise errors.NotFound()
+        raise errors.NotFound(msg="Author is not found for [author_id={}]".format(author_id)
+                              , additional_data={'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
     return author, 200
 
 
