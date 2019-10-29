@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 import flask_rebar
@@ -31,7 +32,9 @@ def create_author():
 def get_author_by_id(author_id: int):
     author = author_service.get_by_id(author_id)
     if author is None:
-        raise errors.NotFound()
+        logging.error("Author is not found for [author_id=%s]", author_id)
+        raise errors.NotFound(msg="Author is not found for [author_id={}]".format(author_id),
+                              additional_data={'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
 
     return author
 
@@ -44,6 +47,7 @@ def get_author_by_id(author_id: int):
 def get_author_by_name(author_name: str):
     authors = author_service.get_by_name(author_name)
     if not authors:
+        logging.error("Author is not found for [author_name=%s]", author_name)
         raise errors.NotFound(msg="Author is not found for [name={}]".format(author_name)
                               , additional_data={'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
     return authors
@@ -59,6 +63,7 @@ def update_author(author_id: int):
     body = flask_rebar.get_validated_body()
     author = author_service.update(author_id, body)
     if author is None:
+        logging.error("Author is not found for [author_id=%s]", author_id)
         raise errors.NotFound(msg="Author is not found for [author_id={}]".format(author_id)
                               , additional_data={'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
     return author, 200
