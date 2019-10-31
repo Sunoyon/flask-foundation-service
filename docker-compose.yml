@@ -5,6 +5,8 @@ services:
     ports:
       - 5432:5432
       - 5000:5000
+    environment:
+      APP_CONFIG: config.cfg
     volumes:
       - ./logs:/var/log/flask-foundation-service/
     command: sh ./entrypoint.sh
